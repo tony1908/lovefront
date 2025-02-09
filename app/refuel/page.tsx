@@ -7,9 +7,13 @@ import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useRouter } from "next/navigation";
 
 export default function RefuelPage() {
-  // Replace with your actual contract address.
+  const { primaryWallet } = useDynamicContext();
+  const router = useRouter();
+  const [txStatus, setTxStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [txHash, setTxHash] = useState<string | undefined>(undefined);
+
+  // Contract details
   const contractAddress = "0x95DB390Cd80D21c455FAF27e520AEabE3e0f0eDD";
-  // Amount to stake: 1 token in human-readable form.
   const stakeAmount = "1"; // 1 token
 
   const stakeAbi = [
@@ -22,16 +26,10 @@ export default function RefuelPage() {
     },
   ];
 
-  const { primaryWallet } = useDynamicContext();
-  const router = useRouter();
   if (!primaryWallet) {
     console.error("No primary wallet found in dynamic context");
     return <div>Please connect your wallet via Dynamic Labs.</div>;
   }
-
-  // Local state to track transaction status
-  const [txStatus, setTxStatus] = useState<"idle" | "loading" | "success">("idle");
-  const [txHash, setTxHash] = useState<string | undefined>(undefined);
 
   // Modified function to automatically process payment and route to partners regardless of outcome
   const handlePayment = async () => {
